@@ -11,7 +11,7 @@ const navigationItems = (props) => {
             <NavigationItem link="/state" >State </NavigationItem>
             <NavigationItem link="/district" > District </NavigationItem>
             <NavigationItem link="/children" > Child </NavigationItem>
-            <NavigationItem link="/auth/logout" >Logout </NavigationItem>
+            <NavigationItem link="/auth" >Login </NavigationItem>
         </ul >
     )
 }
