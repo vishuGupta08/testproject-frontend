@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-
+import { Redirect } from 'react-router-dom'
 import axios from 'axios'
 import Surveyor from '../../component/SurveyorPage/SurveyorPage'
 
@@ -12,29 +12,35 @@ class SurveyorPage extends Component {
         name: '',
         organization: '',
         designation: '',
-        loading: true
+        loading: true,
+        error: 0
     }
 
     componentDidMount() {
         let surveyorName = ''
         let surveyorDesignation = ''
         let surveyorOrganization = ''
-        axios.get('http://localhost:8080/')
+        axios.get('http://localhost:8080/', {
+            headers: {
+                'token': sessionStorage.getItem('token')
+            }
+        })
             .then(response => {
                 surveyorName = response.data[0].name
                 surveyorDesignation = response.data[0].designation
                 surveyorOrganization = response.data[0].organization
-                this.setState({ loading: false, name: surveyorName, organization: surveyorOrganization, designation: surveyorDesignation })
+                this.setState({ error: 0, loading: false, name: surveyorName, organization: surveyorOrganization, designation: surveyorDesignation })
             })
             .catch(error => {
-                this.setState({ loading: false })
+                this.setState({ error: 1 })
             })
     }
 
 
     render() {
         return (
-            <Surveyor name={this.state.name} organization={this.state.organization} designation={this.state.designation} />
+            this.state.error ? <Redirect to='/auth' /> :
+                <Surveyor name={this.state.name} organization={this.state.organization} designation={this.state.designation} />
         )
     }
 }

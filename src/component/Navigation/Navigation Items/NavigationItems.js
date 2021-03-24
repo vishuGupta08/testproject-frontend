@@ -1,7 +1,7 @@
 import React from 'react'
 import NavigationItem from './NavigationItem/NavigationItem'
 import classes from './NavigationItems.css'
-
+import { connect } from 'react-redux'
 
 const navigationItems = (props) => {
     return (
@@ -11,9 +11,15 @@ const navigationItems = (props) => {
             <NavigationItem link="/state" >State </NavigationItem>
             <NavigationItem link="/district" > District </NavigationItem>
             <NavigationItem link="/children" > Child </NavigationItem>
-            <NavigationItem link="/auth" >Login </NavigationItem>
+
+
+            { !sessionStorage.getItem('token') ? <NavigationItem link="/auth" >Login </NavigationItem> : <NavigationItem link="/logout" >Logout </NavigationItem>}
         </ul >
     )
 }
 
-export default navigationItems
+const mapStateToProps = state => {
+    return { isLoggedIn: state.isLoggedIn };
+};
+
+export default connect(mapStateToProps)(navigationItems)

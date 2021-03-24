@@ -1,9 +1,16 @@
-import React, { Component } from 'react'
+import React, { Component, useContext } from 'react'
+import AppContext from '../../component/AppContext'
 import Input from '../../component/UI/Input/Input'
 import Button from '../../component/UI/Button/Button'
 import classes from './auth.css'
 import { updatedObject, checkValidity } from '../../shared/utility'
+import axios from 'axios'
+import { Redirect } from 'react-router-dom'
+
+
 class auth extends Component {
+
+    //  myContext = useContext(AppContext);
 
     state = {
         controls: {
@@ -36,7 +43,8 @@ class auth extends Component {
                 touched: false
             }
 
-        }
+        },
+        loggedIn: 0
     }
 
     inputChangedHandler = (event, controlName) => {
@@ -53,8 +61,18 @@ class auth extends Component {
 
     submitHandler = (event) => {
         event.preventDefault();
-        this.props.onAuth(this.state.controls.email.value, this.state.controls.password.value, this.state.isSignUp)
-
+        // this.props.onAuth(this.state.controls.username.value, this.state.controls.password.value)
+        axios.post('http://localhost:8080/auth/login', {
+            username: this.state.controls.username.value,
+            password: this.state.controls.password.value
+        })
+            .then(res => {
+                sessionStorage.setItem('token', res.data);
+                this.setState({ loggedIn: 1 })
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
 
     render() {
@@ -81,7 +99,7 @@ class auth extends Component {
         ))
 
         return (
-            <form className={classes.Card}>
+            this.state.loggedIn ? <Redirect to="/" /> : <form className={classes.Card} onSubmit={this.submitHandler}>
                 {form}
                 <Button btnType='Success'>Sign In</Button>
             </form>
